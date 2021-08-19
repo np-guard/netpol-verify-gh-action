@@ -1,5 +1,5 @@
 name: 'K8s NetworkPolicy Verification'
-description: 'An action to annotate a PR with 3 comments: connectivity map, connectivity diff and connectivity compliance with preset policies'
+description: 'An action to annotate a PR with connectivity compliance checks, based on preset policies'
 author: 'shift-left-netconfig project'
 
 runs:
@@ -8,18 +8,6 @@ runs:
     - uses: actions/checkout@v2
       with:
         path: new
-    - uses: actions/checkout@v2
-      with:
-        ref: ${{ github.base_ref }}
-        path: old
-    - name: Connectivity map
-      uses: docker://ghcr.io/shift-left-netconfig/nca:1.0
-      with:
-        args: --connectivity /github/workspace/new --pod_list /github/workspace/new/release/kubernetes-manifests.yaml --ns_list /github/workspace/new/release --pr_url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments --gh_token ${{ github.token }} --output_format md
-    - name: Connectivity diff
-      uses: docker://ghcr.io/shift-left-netconfig/nca:1.0
-      with:
-        args: --semantic_diff /github/workspace/new --base_np_list /github/workspace/old --pod_list /github/workspace/new/release/kubernetes-manifests.yaml --ns_list /github/workspace/new/release --pr_url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments --gh_token ${{ github.token }} --output_format md
     - name: Baseline requirements validation
       uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.0
       with:
