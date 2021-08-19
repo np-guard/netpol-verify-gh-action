@@ -9,7 +9,7 @@ runs:
       with:
         path: new
     - name: Baseline requirements validation
-      uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.0
+      uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.1
       with:
         args: -b /baseline-rules-verifier/baseline-rules/examples/restrict_access_to_payment.yaml -b /baseline-rules-verifier/baseline-rules/examples/ciso_denied_ports.yaml -r /github/workspace/new/release /github/workspace/new/release --pr_url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments --tmp_dir /tmp --gh_token ${{ github.token }}
  
