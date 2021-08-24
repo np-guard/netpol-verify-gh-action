@@ -2,14 +2,27 @@ name: 'K8s NetworkPolicy Verification'
 description: 'An action to annotate a PR with connectivity compliance checks, based on preset policies'
 author: 'shift-left-netconfig project'
 
+inputs:
+  deployment-path:
+    description: The path in the repository where deployment yamls are
+    required: false
+    default: release
+  netpol-path:
+    description: The path in the repository where NetworkPolicy yamls are
+    required: false
+    default: release
+  corporate-policies:
+    description: The corporate policy files to use
+    required: true
+
 runs:
   using: 'composite'
   steps:
     - uses: actions/checkout@v2
       with:
-        path: new
+        path: repo
     - name: Baseline requirements validation
       uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.1
       with:
-        args: -b /baseline-rules-verifier/baseline-rules/examples/restrict_access_to_payment.yaml -b /baseline-rules-verifier/baseline-rules/examples/ciso_denied_ports.yaml -r /github/workspace/new/release /github/workspace/new/release --pr_url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments --tmp_dir /tmp --gh_token ${{ github.token }} --nca_path /nca
+        args: -b ${{ inputs.corporate-policies }} -r ${{ github.workspace }}/repo/${{ inputs.deployment-path }} ${{ github.workspace }}/repo/${{ inputs.netpol-path }} --pr_url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments --tmp_dir /tmp --gh_token ${{ github.token }} --nca_path /nca
  
