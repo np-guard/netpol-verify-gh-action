@@ -21,8 +21,23 @@ runs:
     - uses: actions/checkout@v2
       with:
         path: repo
+    - run: |
+        for policy in ${{ inputs.corporate-policies }}
+        do
+          export POLICIES_WITH_B="-b $policy $POLICIES_WITH_B"
+        done
+        echo "::set-output name=policies-with-b::$(echo $POLICIES_WITH_B)"
+      shell: bash
+      id: add-b-flag
     - name: Baseline requirements validation
       uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.1
       with:
-        args: -b ${{ inputs.corporate-policies }} -r /github/workspace/repo/${{ inputs.deployment-path }} /github/workspace/repo/${{ inputs.netpol-path }} --pr_url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments --tmp_dir /tmp --gh_token ${{ github.token }} --nca_path /nca
+        args: >
+          ${{ steps.add-b-flag.outputs.policies-with-b }}
+          -r /github/workspace/repo/${{ inputs.deployment-path }}
+          /github/workspace/repo/${{ inputs.netpol-path }}
+          --pr_url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments
+          --tmp_dir /tmp
+          --gh_token ${{ github.token }}
+          --nca_path /nca
  
