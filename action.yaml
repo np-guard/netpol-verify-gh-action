@@ -30,7 +30,7 @@ runs:
       shell: bash
       id: add-b-flag
     - name: Baseline requirements validation
-      uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.1
+      uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.2.0
       with:
         args: >
           ${{ steps.add-b-flag.outputs.policies-with-b }}
