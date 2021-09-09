@@ -1,43 +1,55 @@
-name: 'K8s NetworkPolicy Verification'
-description: 'An action to annotate a PR with connectivity compliance checks, based on preset policies'
-author: 'shift-left-netconfig project'
+name: K8s NetworkPolicy Verification
+description: An action to annotate a PR with connectivity compliance checks, based on preset policies
+author: shift-left-netconfig project
 
 inputs:
-  deployment-path:
-    description: The path in the repository where deployment yamls are
-    required: false
-    default: release
-  netpol-path:
-    description: The path in the repository where NetworkPolicy yamls are
-    required: false
-    default: release
   corporate-policies:
-    description: The corporate policy files to use
+    description: A space-separated list of corporate policy files to verify (either as GitHub URL or path under GitHub workspace)
     required: true
+  deployment-path:
+    description: The path in GitHub workspace where deployment yamls are
+    required: false
+    default: .
+  netpol-path:
+    description: The path in GitHub workspace where the NetworkPolicy yamls are stored
+    required: false
+    default: .
+  output-format:
+    description: The format in which to output verifitaion results (either "md" or "txt")
+    required: false
+    default: md
+
+outputs:
+  rule-results:
+    description: Verification results of all policies (as text)
+    value: ${{ steps.output-results.outputs.verif-results }}
 
 runs:
-  using: 'composite'
+  using: composite
   steps:
-    - uses: actions/checkout@v2
-      with:
-        path: repo
-    - run: |
+    - name: Prepare command-line arguments
+      id: add-b-flag
+      shell: bash
+      run: |
         for policy in ${{ inputs.corporate-policies }}
         do
           export POLICIES_WITH_B="-b $policy $POLICIES_WITH_B"
         done
         echo "::set-output name=policies-with-b::$(echo $POLICIES_WITH_B)"
-      shell: bash
-      id: add-b-flag
     - name: Baseline requirements validation
-      uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.2.0
+      uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.3.0
       with:
         args: >
           ${{ steps.add-b-flag.outputs.policies-with-b }}
-          -r /github/workspace/repo/${{ inputs.deployment-path }}
-          /github/workspace/repo/${{ inputs.netpol-path }}
-          --pr_url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments
+          -r /github/workspace/${{ inputs.deployment-path }}
+          /github/workspace/${{ inputs.netpol-path }}
           --tmp_dir /tmp
-          --gh_token ${{ github.token }}
           --nca_path /nca
- 
+          --format ${{ inputs.output-format }}
+          -o /tmp/netpol-verify-output.md
+    - name: Set output
+      id: output-results
+      shell: bash
+      run: |
+        export VERIFICATION_RESULTS=$( cat /tmp/netpol-verify-output.md )
+        printf "::set-output name=verif-results::$VERIFICATION_RESULTS"
