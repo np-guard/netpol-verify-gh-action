@@ -51,5 +51,5 @@ runs:
       id: output-results
       shell: bash
       run: |
-        export VERIFICATION_RESULTS=$( cat /tmp/netpol-verify-output.md )
-        printf "::set-output name=verif-results::$VERIFICATION_RESULTS"
+        printf "$( cat /tmp/netpol-verify-output.md )"
+        printf "::set-output name=verif-results::$( cat /tmp/netpol-verify-output.md )"
