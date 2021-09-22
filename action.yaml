@@ -41,7 +41,7 @@ runs:
         done
         echo "::set-output name=policies-with-b::$(echo $POLICIES_WITH_B)"
     - name: Baseline requirements validation
-      uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.3.0
+      uses: docker://ghcr.io/shift-left-netconfig/baseline-rules-verifier:1.3.1
       with:
         args: >
           ${{ steps.add-b-flag.outputs.policies-with-b }}
@@ -55,6 +55,4 @@ runs:
     - name: Set output
       id: output-results
       shell: bash
-      run: |
-        printf "$( cat ${{ github.workspace }}/output/netpol-verify-output.md )\n"
-        printf "::set-output name=verif-results::$( cat ${{ github.workspace }}/output/netpol-verify-output.md )"
+      run: printf "::set-output name=verif-results::$( cat ${{ github.workspace }}/output/netpol-verify-output.md )"
