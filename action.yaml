@@ -27,6 +27,10 @@ outputs:
 runs:
   using: composite
   steps:
+    - shell: sh
+      run: |
+        mkdir -p ${{ github.workspace }}/output
+        chmod a+rw ${{ github.workspace }}/output
     - name: Prepare command-line arguments
       id: add-b-flag
       shell: bash
@@ -46,10 +50,10 @@ runs:
           --tmp_dir /tmp
           --nca_path /nca
           --format ${{ inputs.output-format }}
-          -o /tmp/netpol-verify-output.md
+          -o /github/workspace/output/netpol-verify-output.md
     - name: Set output
       id: output-results
       shell: bash
       run: |
-        printf "$( cat /tmp/netpol-verify-output.md )"
-        printf "::set-output name=verif-results::$( cat /tmp/netpol-verify-output.md )"
+        printf "$( cat ${{ github.workspace }}/output/netpol-verify-output.md )"
+        printf "::set-output name=verif-results::$( cat ${{ github.workspace }}/output/netpol-verify-output.md )"
