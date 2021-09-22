@@ -51,6 +51,7 @@ runs:
           --nca_path /nca
           --format ${{ inputs.output-format }}
           -o /github/workspace/output/netpol-verify-output.md
+          --debug
     - name: Set output
       id: output-results
       shell: bash
