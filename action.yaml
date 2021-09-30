@@ -23,6 +23,9 @@ inputs:
     default: md
 
 outputs:
+  num-violated-policies:
+    description: The number of corporate policies which the cluster's connectivity graph violates
+    value: ${{ steps.output-results.outputs.num-violated-policies }}
   policy-results-artifact:
     description: The name of the artifact containing verification results for all policies
     value: ${{ steps.output-results.outputs.policy-results-artifact }}
@@ -65,6 +68,12 @@ runs:
       id: output-results
       shell: bash
       run: |
+        violated=$(  tail -n1 ${{ github.workspace }}/netpol-verify-gh-action-output/netpol-verify-output.${{ inputs.output-format }} | cut -d' ' -f1 )
+        if [[ "$violated" == "All" ]]; then
+          violated=0
+        fi
+
+        echo "::set-output name=num-violated-policies::$violated"
         echo "::set-output name=policy-results-artifact::connectivity-policy-results"
         echo "::set-output name=policy-results-file-name::netpol-verify-output.${{ inputs.output-format }}"
         rm -r ${{ github.workspace }}/netpol-verify-gh-action-output
