@@ -66,4 +66,4 @@ runs:
       run: |
         echo "::set-output name=policy-results-artifact::connectivity-policy-results"
         echo "::set-output name=policy-results-file-name::netpol-verify-output.${{ inputs.output-format }}"
-        rm -r netpol-verify-gh-action-output
+        rm -r ${{ github.workspace }}/netpol-verify-gh-action-output
