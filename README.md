@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Verify policies
         id: verify-policies
-        uses: shift-left-netconfig/netpol-verify-gh-action@master
+        uses: shift-left-netconfig/netpol-verify-gh-action@v1
         with:
           corporate-policies: >
             https://github.com/shift-left-netconfig/baseline-rules/blob/master/examples/ciso_denied_ports.yaml
@@ -56,7 +56,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Verify policies
         id: verify-policies
-        uses: shift-left-netconfig/netpol-verify-gh-action@master
+        uses: shift-left-netconfig/netpol-verify-gh-action@v1
         with:
           corporate-policies: >
             https://github.com/shift-left-netconfig/baseline-rules/blob/master/examples/restrict_access_to_payment.yaml
