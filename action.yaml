@@ -1,5 +1,5 @@
 name: K8s NetworkPolicy Verification
-description: An action to annotate a PR with connectivity compliance checks, based on preset policies
+description: An action to verify connectivity compliance requirements, based on preset policies
 author: shift-left-netconfig project
 
 inputs:
@@ -20,17 +20,20 @@ inputs:
     default: md
 
 outputs:
-  rule-results:
-    description: Verification results of all policies (as text)
-    value: ${{ steps.output-results.outputs.verif-results }}
+  policy-results-artifact:
+    description: The name of the artifact containing verification results of all policies
+    value: ${{ steps.output-results.outputs.policy-results-artifact }}
+  policy-results-file:
+    description: The name of the actual file in the artifact, which contain verification results for all policies
+    value: ${{ steps.output-results.outputs.policy-results-file-name }}
 
 runs:
   using: composite
   steps:
     - shell: sh
       run: |
-        mkdir -p ${{ github.workspace }}/output
-        chmod a+rw ${{ github.workspace }}/output
+        mkdir -p ${{ github.workspace }}/netpol-verify-gh-action-output
+        chmod a+rw ${{ github.workspace }}/netpol-verify-gh-action-output
     - name: Prepare command-line arguments
       id: add-b-flag
       shell: bash
@@ -50,9 +53,17 @@ runs:
           --tmp_dir /tmp
           --nca_path /nca
           --format ${{ inputs.output-format }}
-          -o /github/workspace/output/netpol-verify-output.md
+          -o /github/workspace/netpol-verify-gh-action-output/netpol-verify-output.${{ inputs.output-format }}
           --return_0
-    - name: Set output
+    - name: upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: connectivity-policy-results
+        path: ${{ github.workspace }}/netpol-verify-gh-action-output/netpol-verify-output.${{ inputs.output-format }}
+    - name: Set output and clean
       id: output-results
       shell: bash
-      run: printf "::set-output name=verif-results::$( cat ${{ github.workspace }}/output/netpol-verify-output.md )"
+      run: |
+        echo "::set-output name=policy-results-artifact::connectivity-policy-results"
+        echo "::set-output name=policy-results-file-name::netpol-verify-output.${{ inputs.output-format }}"
+        rm -r netpol-verify-gh-action-output
