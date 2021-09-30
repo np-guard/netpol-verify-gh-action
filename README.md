@@ -64,7 +64,7 @@ jobs:
         with:
           name: ${{ steps.verify-policies.outputs.policy-results-artifact }}
       - name: comment PR
-        uses: machine-learning-apps/pr-comment@master
+        uses: machine-learning-apps/pr-comment@1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
