@@ -1,17 +1,20 @@
 name: K8s NetworkPolicy Verification
 description: An action to verify connectivity compliance requirements, based on preset policies
 author: shift-left-netconfig project
+branding:
+  icon: shield
+  color: green
 
 inputs:
   corporate-policies:
-    description: A space-separated list of corporate policy files to verify (either as GitHub URL or path under GitHub workspace)
+    description: A space-separated list of corporate policy files to verify (either as GitHub URLs or paths under GitHub workspace)
     required: true
   deployment-path:
-    description: The path in GitHub workspace where deployment yamls are
+    description: The path in the GitHub workspace where deployment yamls are
     required: false
     default: .
   netpol-path:
-    description: The path in GitHub workspace where the NetworkPolicy yamls are stored
+    description: The path in the GitHub workspace where the NetworkPolicy yamls are stored
     required: false
     default: .
   output-format:
@@ -21,7 +24,7 @@ inputs:
 
 outputs:
   policy-results-artifact:
-    description: The name of the artifact containing verification results of all policies
+    description: The name of the artifact containing verification results for all policies
     value: ${{ steps.output-results.outputs.policy-results-artifact }}
   policy-results-file:
     description: The name of the actual file in the artifact, which contain verification results for all policies
@@ -30,14 +33,12 @@ outputs:
 runs:
   using: composite
   steps:
-    - shell: sh
-      run: |
-        mkdir -p ${{ github.workspace }}/netpol-verify-gh-action-output
-        chmod a+rw ${{ github.workspace }}/netpol-verify-gh-action-output
-    - name: Prepare command-line arguments
+    - name: Prepare directory and command-line arguments
       id: add-b-flag
       shell: bash
       run: |
+        mkdir -p ${{ github.workspace }}/netpol-verify-gh-action-output
+        chmod a+rw ${{ github.workspace }}/netpol-verify-gh-action-output
         for policy in ${{ inputs.corporate-policies }}
         do
           export POLICIES_WITH_B="-b $policy $POLICIES_WITH_B"
@@ -55,12 +56,12 @@ runs:
           --format ${{ inputs.output-format }}
           -o /github/workspace/netpol-verify-gh-action-output/netpol-verify-output.${{ inputs.output-format }}
           --return_0
-    - name: upload artifact
+    - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: connectivity-policy-results
         path: ${{ github.workspace }}/netpol-verify-gh-action-output/netpol-verify-output.${{ inputs.output-format }}
-    - name: Set output and clean
+    - name: Set outputs and clean
       id: output-results
       shell: bash
       run: |
