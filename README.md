@@ -40,7 +40,6 @@ jobs:
         with:
           corporate-policies: >
             https://github.com/shift-left-netconfig/baseline-rules/blob/master/examples/ciso_denied_ports.yaml
-            https://github.com/shift-left-netconfig/baseline-rules/blob/master/examples/restrict_access_to_payment.yaml
       - run: exit ${{ steps.verify-policies.outputs.num-violated-policies }}
 ```
 ### Add policy verification results as a PR comment
@@ -59,6 +58,7 @@ jobs:
         uses: shift-left-netconfig/netpol-verify-gh-action@v1
         with:
           corporate-policies: >
+            https://github.com/shift-left-netconfig/baseline-rules/blob/master/examples/ciso_denied_ports.yaml
             https://github.com/shift-left-netconfig/baseline-rules/blob/master/examples/restrict_access_to_payment.yaml
       - uses: actions/download-artifact@v2
         with:
@@ -70,3 +70,5 @@ jobs:
         with:
           path: ${{ steps.verify-policies.outputs.policy-results-file }}
 ```
+This should output something like this:
+![](/PR-comment.png)
