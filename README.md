@@ -13,12 +13,12 @@ A space-separated list of corporate policy files to verify (either as GitHub URL
 ### netpol-path
 (Optional) The path in the GitHub workspace where the NetworkPolicy yamls are stored. Default is . (scanning the whole repository).
 ### output-format
-(Optional) The format in which to output verifitaion results. Either "md" (deafult) or "txt".
+(Optional) The format in which to output verifitaion results. Either "md" (default) or "txt".
 ## Outputs
 ### policy-results-artifact
 The name of the artifact containing verification results for all policies
 ### policy-results-file
-The name of the actual file in the artifact, which contain verification results for all policies
+The name of the actual file in the artifact, which contains verification results for all policies
 ### num-violated-policies
 The number of corporate policies which the cluster's connectivity graph violates
 ## Usage examples
