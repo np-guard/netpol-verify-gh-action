@@ -64,11 +64,9 @@ jobs:
         with:
           name: ${{ steps.verify-policies.outputs.policy-results-artifact }}
       - name: comment PR
-        uses: machine-learning-apps/pr-comment@1.0.0
+        run: gh pr comment  ${{ github.event.number }} -F ${{ steps.verify-policies.outputs.policy-results-file }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          path: ${{ steps.verify-policies.outputs.policy-results-file }}
 ```
 This should output something like this:
 ![](/PR-comment.png)
