@@ -1,9 +1,9 @@
 # Verify cluster connectivity against corporate policies
 
 ## About
-This action checks the connectivity in a given Kubernetes cluster against a set of corporate policies. It will first extract the cluster's connectivity graph by scanning your repository for YAML files containing endpoint resources (e.g., Deployments) or connectivity resources (Kubernetes NetworkPolicies). It will then verify that the connectivity graph adheres to a set of corporate policies, given as the action's input. Corporate policies are defined in YAML files; their syntax is defined [here](https://github.com/shift-left-netconfig/baseline-rules).
+This action checks the connectivity in a given Kubernetes cluster against a set of corporate policies. It will first extract the cluster's connectivity graph by scanning your repository for YAML files containing endpoint resources (e.g., Deployments) or connectivity resources (Kubernetes NetworkPolicies). It will then verify that the connectivity graph adheres to a set of corporate policies, given as the action's input. Corporate policies are defined in YAML files; their syntax is defined [here](https://github.com/np-guard/baseline-rules).
 
-This action is part of a wider attempt to provide [shift-left automation for generating and maintaining Kubernetes Network Policies](https://shift-left-netconfig.github.io/).
+This action is part of a wider attempt to provide [shift-left automation for generating and maintaining Kubernetes Network Policies](https://np-guard.github.io/).
 
 ## Inputs
 ### corporate-policies
@@ -36,10 +36,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Verify policies
         id: verify-policies
-        uses: shift-left-netconfig/netpol-verify-gh-action@v1
+        uses: np-guard/netpol-verify-gh-action@v2
         with:
           corporate-policies: >
-            https://github.com/shift-left-netconfig/baseline-rules/blob/master/examples/ciso_denied_ports.yaml
+            https://github.com/np-guard/baseline-rules/blob/master/examples/ciso_denied_ports.yaml
       - run: exit ${{ steps.verify-policies.outputs.num-violated-policies }}
 ```
 ### Add policy verification results as a PR comment
@@ -55,11 +55,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Verify policies
         id: verify-policies
-        uses: shift-left-netconfig/netpol-verify-gh-action@v1
+        uses: np-guard/netpol-verify-gh-action@v2
         with:
           corporate-policies: >
-            https://github.com/shift-left-netconfig/baseline-rules/blob/master/examples/ciso_denied_ports.yaml
-            https://github.com/shift-left-netconfig/baseline-rules/blob/master/examples/restrict_access_to_payment.yaml
+            https://github.com/np-guard/baseline-rules/blob/master/examples/ciso_denied_ports.yaml
+            https://github.com/np-guard/baseline-rules/blob/master/examples/restrict_access_to_payment.yaml
       - uses: actions/download-artifact@v2
         with:
           name: ${{ steps.verify-policies.outputs.policy-results-artifact }}
